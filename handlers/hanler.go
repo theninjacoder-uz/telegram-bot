@@ -67,8 +67,9 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 				phone = update.Message.Contact.PhoneNumber
 			}
 
-			if models.IsPhone(phone) {
-				h.storage.SavePhone(chatID, phone)
+			if p, ok := models.IsPhone(phone); ok {
+				phone = p
+				h.storage.SavePhone(chatID, p)
 			} else if models.IsTin(phone) {
 				h.storage.SaveTin(chatID, phone)
 			} else {

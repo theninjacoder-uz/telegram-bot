@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 	"unicode"
 )
@@ -33,8 +34,12 @@ func ValidateLang(lang string) error {
 var uzbPhoneRegex = regexp.MustCompile(`[+]{0,1}99{1}[0-9]{10}$`)
 
 // IsPhoneValid validates phone number for Uzbekistan
-func IsPhone(p string) bool {
-	return uzbPhoneRegex.MatchString(p)
+func IsPhone(p string) (string, bool) {
+	ok := uzbPhoneRegex.MatchString(p)
+	if strings.HasPrefix(p, "+") {
+		return p[1:], ok
+	}
+	return p, ok
 }
 
 func IsTin(v string) bool {
