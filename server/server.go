@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"tgbot/configs"
 	"tgbot/handlers"
 )
@@ -10,7 +11,9 @@ import (
 // Start ...
 func Start(config *configs.Configuration, h *handlers.HandlerService) {
 
-	err := http.ListenAndServe(config.ServerPort, http.HandlerFunc(h.GlobalHandler))
+	crt, _ := filepath.Abs("../configs/CGR.crt")
+	key, _ := filepath.Abs("../configs/provider.key")
+	err := http.ListenAndServeTLS(config.ServerPort, crt, key, http.HandlerFunc(h.GlobalHandler))
 	if err != nil {
 		fmt.Println("error on staring server!")
 	}
