@@ -9,9 +9,9 @@ const (
 	SELECT_LANG_ENG = "Please select a language!"
 	SELECT_LANG_UZB = "Iltimos tilni tanlang!"
 
-	SEND_PHON_NUMBER_RUS = "Отправьте свой номер телефона (выберите кнопку или введите его как: 998990010101)!"
-	SEND_PHON_NUMBER_ENG = "Send your phone number (choose button or type it like: 998990010101)!"
-	SEND_PHON_NUMBER_UZB = "Telefon raqamingizni yubirish uchun tugmani bosing yoki STIR yoki telefon raqamingizni (998990010101, 123456789) formatda kiriting!"
+	SEND_PHON_NUMBER_RUS = "Отправьте свой номер телефона (выберите кнопку 👇)"
+	SEND_PHON_NUMBER_ENG = "Send your phone number (choose button 👇)"
+	SEND_PHON_NUMBER_UZB = "Telefon raqamingizni yubirish uchun tugmani bosing! 👇"
 
 	LANGUAGE_RUS = "🇷🇺 Русский язык"
 	LANGUAGE_ENG = "🇬🇧 English language"
@@ -37,9 +37,13 @@ const (
 	INTERNAL_ERROR_RUS = "Произошла системная ошибка. Попробуйте позже."
 	INTERNAL_ERROR_UZB = "Tizimda xatolik yuz berdi. Keyinroq urinib ko'ring."
 
-	INCORRECT_PHONE_ENG = "Phone number or TIN is incorrect!"
-	INCORRECT_PHONE_RUS = "Номер телефона или ИНН указан неверно!"
-	INCORRECT_PHONE_UZB = "Telefon raqami yoki STIR noto'g'ri!"
+	INCORRECT_PHONE_ENG = "Phone number is incorrect! Please try again."
+	INCORRECT_PHONE_RUS = "Номер телефона указан неверно! Пожалуйста, попробуйте еще раз."
+	INCORRECT_PHONE_UZB = "Telefon raqami noto'g'ri! Iltimos qaytadan urinib ko'ring."
+
+	TEXT_PHONE_ENG = "Please send your phone number by clicking the button! 👇"
+	TEXT_PHONE_RUS = "Пожалуйста, отправьте номер телефона, нажав кнопку! 👇"
+	TEXT_PHONE_UZB = "Iltimos, tugmani bosish orqali telefon raqamingizni yuboring! 👇"
 
 	MENU_ENG = "Main menu"
 	MENU_UZB = "Bosh sahifa"

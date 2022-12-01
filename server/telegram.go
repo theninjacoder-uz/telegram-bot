@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	bot     *tgbotapi.BotAPI
-	baseURL = "https://8074-94-158-59-71.eu.ngrok.io/"
+	bot *tgbotapi.BotAPI
 )
 
 func InitTelegram() *tgbotapi.BotAPI {
@@ -22,7 +21,7 @@ func InitTelegram() *tgbotapi.BotAPI {
 
 	// this perhaps should be conditional on GetWebhookInfo()
 	// only set webhook if it is not set properly
-	url := baseURL + bot.Token
+	url := configs.Config().ServerHost + bot.Token
 	_, err = tgbotapi.NewWebhook(url)
 	if err != nil {
 		log.Println(err)

@@ -31,6 +31,7 @@ func GetDateInlineBtns(date string) *tgbotapi.InlineKeyboardMarkup {
 	currentMonth := month + 1
 	currentYear := year - 1
 	if currentMonth > 12 {
+		currentMonth = 1
 		currentYear++
 	}
 

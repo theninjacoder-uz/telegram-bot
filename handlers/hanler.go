@@ -35,6 +35,7 @@ func New(storage storage.IUserStorage, bot *tgbotapi.BotAPI) *HandlerService {
 func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Request) {
 	// First, decode the JSON response body
 	var update *tgbotapi.Update
+	fmt.Println("update: ", &update)
 	if err := utils.ParseBody(req, &update); err != nil {
 		fmt.Println("could not decode request body", err)
 		return
@@ -61,11 +62,14 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 		}
 
 		// Receive PHONE or STIR
-		if update.Message.Contact != nil || user.State == 2 {
-			phone := update.Message.Text
-			if update.Message.Contact != nil {
-				phone = update.Message.Contact.PhoneNumber
+		if user.State == 2 {
+
+			if update.Message.Contact == nil {
+				h.sendErrorMsgWithLang(chatID, constants.TEXT_PHONE_UZB, constants.TEXT_PHONE_ENG, constants.TEXT_PHONE_RUS, user.Language)
+				return
 			}
+
+			phone := update.Message.Contact.PhoneNumber
 
 			if p, ok := models.IsPhone(phone); ok {
 				phone = p
@@ -85,7 +89,7 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 					h.sendErrorMsgWithLang(chatID, constants.INTERNAL_ERROR_UZB, constants.INTERNAL_ERROR_ENG, constants.INTERNAL_ERROR_RUS, user.Language)
 					return
 				}
-				h.storage.UpdateState(chatID, 2)
+				// h.storage.UpdateState(chatID, 2)
 				h.sendErrorMsgWithLang(chatID, constants.USER_NOT_FOUND_UZB, constants.USER_NOT_FOUND_ENG, constants.USER_NOT_FOUND_RUS, user.Language)
 				return
 			}
@@ -99,6 +103,7 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 		msg := update.Message.Text
 		switch msg {
 		case "/start":
+
 			if user.State == 0 {
 				h.sendLanguageOptions(*update, user.Language, "Здравствуйте! ")
 				h.storage.UpdateState(chatID, 1) // send lang options
@@ -184,8 +189,6 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 	} else if update.CallbackQuery != nil {
 		chatID := update.CallbackQuery.Message.Chat.ID
 		data := update.CallbackQuery.Data
-		fmt.Printf("calback query: %v\n", update.CallbackQuery)
-		fmt.Printf("calback data: %v\n", data)
 
 		user, err := h.storage.CheckUser(chatID)
 		if err != nil {

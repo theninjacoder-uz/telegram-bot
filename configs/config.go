@@ -63,6 +63,7 @@ func load() *Configuration {
 	config.CtxTimeout = v.GetInt("CONTEXT_TIMEOUT")
 	config.TelgramBotURI = v.GetString("TELEGRAM_BOT_URI")
 	config.TelgramBotToken = v.GetString("TELEGRAM_BOT_TOKEN")
+	config.ServerHost = v.GetString("SERVER_HOST")
 	config.ServerPort = v.GetString("SERVER_PORT")
 	config.PostgresDatabase = v.GetString("POSTGRES_DB")
 	config.PostgresUser = v.GetString("POSTGRES_USER")
