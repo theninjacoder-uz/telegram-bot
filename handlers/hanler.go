@@ -14,11 +14,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 2 get language and updated language and sended phone number
-// 1 send language options
-// 4 stir and phone saved to db
-// 5 send salary data options and set state 5
-// 6 send salary info
 type HandlerService struct {
 	storage storage.IUserStorage
 	bot     *tgbotapi.BotAPI
@@ -50,11 +45,11 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			h.storage.Create(&storage.User{
 				ChatID:   chatID,
-				Language: constants.RUS,
+				Language: constants.ENG,
 			})
 			user = &storage.User{
 				ChatID:   chatID,
-				Language: constants.RUS,
+				Language: constants.ENG,
 				State:    0, // After start button
 			}
 		} else if err != nil {
@@ -105,7 +100,7 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 		case "/start":
 
 			if user.State == 0 {
-				h.sendLanguageOptions(*update, user.Language, "Здравствуйте! ")
+				h.sendLanguageOptions(*update, user.Language, "Hello! ")
 				h.storage.UpdateState(chatID, 1) // send lang options
 				return
 			} else if user.IsVerified {
@@ -115,50 +110,27 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 				h.replySendPhone(chatID, user.Language)
 				h.storage.UpdateState(chatID, 2)
 			}
-		case "◀️":
+		case constants.BACK_ENG, constants.BACK_UZB, constants.BACK_RUS:
 			h.bot.Send(tgbotapi.NewDeleteMessage(chatID, update.Message.MessageID))
 			h.storage.UpdateState(chatID, 3)
 			h.sendMainMenu(chatID, user.Language)
 
-		case constants.SETTINGS_ENG:
-			h.sendSettingsMenu(chatID, constants.ENG)
-			h.storage.UpdateState(chatID, 5)
-		case constants.SETTINGS_UZB:
-			h.sendSettingsMenu(chatID, constants.UZB)
-			h.storage.UpdateState(chatID, 5)
-		case constants.SETTINGS_RUS:
-			h.sendSettingsMenu(chatID, constants.RUS)
+		case constants.SETTINGS_ENG, constants.SETTINGS_UZB, constants.SETTINGS_RUS:
+			h.sendSettingsMenu(chatID, user.Language)
 			h.storage.UpdateState(chatID, 5)
 
-		case constants.SALARY_INFO_ENG:
-			h.sendDateOptions(chatID, utils.ParseNow(), constants.ENG)
-			h.storage.UpdateState(chatID, 4)
-		case constants.SALARY_INFO_UZB:
-			h.sendDateOptions(chatID, utils.ParseNow(), constants.UZB)
-			h.storage.UpdateState(chatID, 4)
-		case constants.SALARY_INFO_RUS:
-			h.sendDateOptions(chatID, utils.ParseNow(), constants.RUS)
+		case constants.SALARY_INFO_ENG, constants.SALARY_INFO_UZB, constants.SALARY_INFO_RUS:
+			h.sendDateOptions(chatID, utils.ParseNow(), user.Language)
 			h.storage.UpdateState(chatID, 4)
 
-		case constants.CHANGE_LANG_ENG:
-			h.sendLanguageOptions(*update, constants.ENG, "")
-			h.storage.UpdateState(chatID, 6)
-		case constants.CHANGE_LANG_UZB:
-			h.sendLanguageOptions(*update, constants.UZB, "")
-			h.storage.UpdateState(chatID, 6)
-		case constants.CHANGE_LANG_RUS:
-			h.sendLanguageOptions(*update, constants.RUS, "")
+		case constants.CHANGE_LANG_ENG, constants.CHANGE_LANG_UZB, constants.CHANGE_LANG_RUS:
+			h.sendLanguageOptions(*update, user.Language, "")
 			h.storage.UpdateState(chatID, 6)
 
-		case constants.CHANGE_PHONE_ENG:
-			h.replySendPhone(chatID, constants.ENG)
+		case constants.CHANGE_PHONE_ENG, constants.CHANGE_PHONE_RUS, constants.CHANGE_PHONE_UZB:
+			h.replySendPhone(chatID, user.Language)
 			h.storage.UpdateState(chatID, 2)
-		case constants.CHANGE_PHONE_RUS:
-			h.replySendPhone(chatID, constants.RUS)
-			h.storage.UpdateState(chatID, 2)
-		case constants.CHANGE_PHONE_UZB:
-			h.replySendPhone(chatID, constants.UZB)
-			h.storage.UpdateState(chatID, 2)
+
 		default:
 			if user.State == 4 {
 				date := update.Message.Text
@@ -341,10 +313,8 @@ func (h *HandlerService) sendDateOptions(chatID int64, date, lang string) error 
 		text = constants.PERIOD_ENG
 	}
 
-	fmt.Printf("keldi: %v", text)
-
 	msg := tgbotapi.NewMessage(chatID, text)
-	msg.ReplyMarkup = utils.GetDateInlineBtns(date)
+	msg.ReplyMarkup = utils.GetDateInlineBtns(date, lang)
 
 	_, err := h.bot.Send(msg)
 	return err
@@ -355,15 +325,18 @@ func (h *HandlerService) sendSettingsMenu(chatID int64, lang string) error {
 	msg := tgbotapi.NewMessage(chatID, constants.SETTINGS_MENU_RUS)
 	langSettings := constants.CHANGE_LANG_RUS
 	phone := constants.CHANGE_PHONE_RUS
+	back := constants.BACK_RUS
 	if lang == constants.UZB {
 		msg = tgbotapi.NewMessage(chatID, constants.SETTINGS_MENU_UZB)
 		langSettings = constants.CHANGE_LANG_UZB
 		phone = constants.CHANGE_PHONE_UZB
+		back = constants.BACK_UZB
 
 	} else if lang == constants.ENG {
 		msg = tgbotapi.NewMessage(chatID, constants.SETTINGS_MENU_ENG)
 		langSettings = constants.CHANGE_LANG_ENG
 		phone = constants.CHANGE_PHONE_ENG
+		back = constants.BACK_ENG
 	}
 	var btns = tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
@@ -373,7 +346,7 @@ func (h *HandlerService) sendSettingsMenu(chatID int64, lang string) error {
 			tgbotapi.NewKeyboardButton(langSettings),
 		),
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("◀️"),
+			tgbotapi.NewKeyboardButton(back),
 		),
 	)
 	msg.ReplyMarkup = btns
