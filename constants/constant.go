@@ -61,9 +61,9 @@ const (
 	SIGN_UP_RUS = "Пожалуйста, зарегистрируйтесь!"
 	SIGN_UP_UZB = "Iltimos avval ro'yxatdan o'ting!"
 
-	CHANGE_LANG_UZB = "tilni o'zgartirish"
-	CHANGE_LANG_RUS = "изменить язык"
-	CHANGE_LANG_ENG = "change the language"
+	CHANGE_LANG_UZB = "Tilni o'zgartirish"
+	CHANGE_LANG_RUS = "Изменить язык"
+	CHANGE_LANG_ENG = "Change the language"
 
 	CHANGE_PHONE_UZB = "Telefon raqamimni o’zgartirish"
 	CHANGE_PHONE_RUS = "Изменить номер телефона"
@@ -81,7 +81,7 @@ const (
 	PREVIOUS_DATE_UZB = "⬅️ O’tgan davr"
 	PREVIOUS_DATE_RUS = "⬅️ Прошлый период"
 
-	NEXT_DATE_ENG = "➡️ Next period"
-	NEXT_DATE_UZB = "➡️ Keyingi davr"
-	NEXT_DATE_RUS = "➡️ Следующий период"
+	NEXT_DATE_ENG = "Next period ➡️"
+	NEXT_DATE_UZB = "Keyingi davr ➡️"
+	NEXT_DATE_RUS = "Следующий период ➡️"
 )

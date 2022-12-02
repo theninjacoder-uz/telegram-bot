@@ -56,7 +56,7 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 			h.sendErrorMsgWithLang(chatID, constants.INTERNAL_ERROR_UZB, constants.INTERNAL_ERROR_ENG, constants.INTERNAL_ERROR_RUS, user.Language)
 		}
 
-		// Receive PHONE or STIR
+		// Receive PHONE
 		if user.State == 2 {
 
 			if update.Message.Contact == nil {
@@ -99,7 +99,7 @@ func (h *HandlerService) GlobalHandler(res http.ResponseWriter, req *http.Reques
 		switch msg {
 		case "/start":
 
-			if user.State == 0 {
+			if user.State < 2 {
 				h.sendLanguageOptions(*update, user.Language, "Hello! ")
 				h.storage.UpdateState(chatID, 1) // send lang options
 				return
